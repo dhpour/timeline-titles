@@ -1,0 +1,4 @@
+google-genai
+elasticsearch==8.16.0
+python-dotenv
+ratelimit
