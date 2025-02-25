@@ -79,7 +79,11 @@ def generate_title_with_gemini(prompt):
     )
     return response.text
 
-c = 1
-for tweet in tweets:
-    print(c, tweet)
-    c += 1
+if __name__ == "__main__":
+    c = 1
+    ids = get_all_converted_ids()
+
+    for tweet in tweets:
+        if tweet['_id'] not in ids:
+            print(c, tweet)
+            c += 1
