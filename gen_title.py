@@ -74,7 +74,7 @@ client = Client(api_key=os.getenv("GOOGLE_API"))
 
 @sleep_and_retry
 @limits(calls=1500, period=86400)
-@limits(calls=15, period=60)
+@limits(calls=1, period=5)
 def generate_title_with_gemini(prompt):
     response = client.models.generate_content(
         model=model_name,
