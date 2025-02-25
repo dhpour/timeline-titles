@@ -29,17 +29,20 @@ class SentenceIterator:
                     }
                   }
                 }}, 
-                _source={"includes": ["full_text"]},
+                _source={"includes": ["full_text", "created_at"]},
                 track_total_hits=True,
                 size=1500
         ).body
         for doc in docs['hits']['hits']:
             #print(doc['_source']['full_text'])
-            yield doc['_id']
+            yield doc
 
 def get_all_converted_ids():
     docs = es.search(index="gemini_titles", query={"match_all": {}}, _source=False)
     return [doc['_id'] for doc in docs['hits']['hits']]
+
+def set_title(id, title, ftext, created_at):
+    es.index(index="gemini_titles", id=id, body={"title": title, "full_text": ftext, "created_at": created_at})
 
 def are_docs_new(ids):
     try:
@@ -80,10 +83,21 @@ def generate_title_with_gemini(prompt):
     return response.text
 
 if __name__ == "__main__":
+    prompt = f"""
+Please generate a concise, engaging title for the following text.
+Return ONLY the title, nothing else.
+The title should be in Persian.
+
+TEXT:
+
+"""
     c = 1
     ids = get_all_converted_ids()
 
     for tweet in tweets:
         if tweet['_id'] not in ids:
-            print(c, tweet)
+            new_prompt = prompt + tweet['_source']['full_text'] 
+            title = generate_title_with_gemini(new_prompt)
+            set_title(tweet['_id'], title, tweet['_source']['full_text'], tweet['_source']['created_at'])
+            print(c, tweet['_id'], 'recieved title')
             c += 1
