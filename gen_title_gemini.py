@@ -44,26 +44,6 @@ def get_all_converted_ids():
 def set_title(id, title, ftext, created_at, user_screen_name):
     es.index(index=os.getenv("GEMINI_EVENTS"), id=id, body={"title": title, "full_text": ftext, "created_at": created_at, "user_screen_name": user_screen_name})
 
-def are_docs_new(ids):
-    try:
-        docs = [{"_id": id, "_source": False} for id in ids]
-        
-        result = es.mget(
-            index="amag_qa_index",  # Replace with your actual index name
-            body={"docs": docs}
-        )
-        
-        if result and 'docs' in result:
-            # Filter docs that weren't found and map to their IDs
-            new_docs = [doc['_id'] for doc in result['docs'] if not doc['found']]
-            return new_docs
-        
-        return []
-        
-    except Exception as err:
-        print('areDocsNew:', err)
-        return []
-
 tweets = SentenceIterator()
 
 model_name = "gemini-2.0-flash-thinking-exp"
