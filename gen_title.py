@@ -29,7 +29,7 @@ class SentenceIterator:
                     }
                   }
                 }}, 
-                _source={"includes": ["full_text", "created_at"]},
+                _source={"includes": ["full_text", "created_at", "user"]},
                 track_total_hits=True,
                 size=1500
         ).body
@@ -38,11 +38,11 @@ class SentenceIterator:
             yield doc
 
 def get_all_converted_ids():
-    docs = es.search(index="gemini_titles", query={"match_all": {}}, _source=False)
+    docs = es.search(index=os.getenv("GEMINI_EVENTS"), query={"match_all": {}}, _source=False)
     return [doc['_id'] for doc in docs['hits']['hits']]
 
 def set_title(id, title, ftext, created_at, user_screen_name):
-    es.index(index="gemini_titles", id=id, body={"title": title, "full_text": ftext, "created_at": created_at, "user_screen_name": user_screen_name})
+    es.index(index=os.getenv("GEMINI_EVENTS"), id=id, body={"title": title, "full_text": ftext, "created_at": created_at, "user_screen_name": user_screen_name})
 
 def are_docs_new(ids):
     try:
@@ -84,7 +84,7 @@ def generate_title_with_gemini(prompt):
 
 if __name__ == "__main__":
     prompt = f"""
-Please generate a concise, engaging title for the following text.
+Please generate a concise, engaging names for the main events in the following text.
 Return ONLY the title, nothing else.
 The title should be in Persian.
 
@@ -96,8 +96,11 @@ TEXT:
 
     for tweet in tweets:
         if tweet['_id'] not in ids:
+            #print(tweet['_source'])
             new_prompt = prompt + tweet['_source']['full_text'] 
             title = generate_title_with_gemini(new_prompt)
+            #print(tweet['_id'])
+            #print(tweet['_source']['user'])
             set_title(
                 tweet['_id'], 
                 title, 
