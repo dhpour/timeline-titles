@@ -24,7 +24,7 @@ class SentenceIterator:
                   ],
                   "filter": {
                     "terms": {
-                      "user.screen_name.keyword": ["bbcpersian", "Entekhab_News", "ManotoNews", "GanjiAkbar", "Tasnimnews_Fa", "EtemadOnline", "VOAfarsi", "IranIntl", "indypersian", "RadioFarda_", "AlainPersian", "isna_farsi", "oxus_tv", "teletabnak", "Digiato", "hamshahrinews"]
+                      "user.screen_name.keyword": ["bbcpersian", "Entekhab_News", "ManotoNews", "GanjiAkbar", "Tasnimnews_Fa", "EtemadOnline", "VOAfarsi", "IranIntl", "indypersian", "RadioFarda_", "AlainPersian", "isna_farsi", "oxus_tv", "teletabnak", "Digiato", "hamshahrinews", "AjaNews_persian"]
                     }
                   }
                 }}, 
