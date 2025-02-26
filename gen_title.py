@@ -41,8 +41,8 @@ def get_all_converted_ids():
     docs = es.search(index="gemini_titles", query={"match_all": {}}, _source=False)
     return [doc['_id'] for doc in docs['hits']['hits']]
 
-def set_title(id, title, ftext, created_at):
-    es.index(index="gemini_titles", id=id, body={"title": title, "full_text": ftext, "created_at": created_at})
+def set_title(id, title, ftext, created_at, user_screen_name):
+    es.index(index="gemini_titles", id=id, body={"title": title, "full_text": ftext, "created_at": created_at, "user_screen_name": user_screen_name})
 
 def are_docs_new(ids):
     try:
@@ -98,6 +98,11 @@ TEXT:
         if tweet['_id'] not in ids:
             new_prompt = prompt + tweet['_source']['full_text'] 
             title = generate_title_with_gemini(new_prompt)
-            set_title(tweet['_id'], title, tweet['_source']['full_text'], tweet['_source']['created_at'])
+            set_title(
+                tweet['_id'], 
+                title, 
+                tweet['_source']['full_text'], 
+                tweet['_source']['created_at'],
+                tweet['_source']['user']['screen_name'])
             print(c, tweet['_id'], 'recieved title')
             c += 1
